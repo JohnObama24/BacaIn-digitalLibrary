@@ -18,14 +18,14 @@ class BookController extends Controller
             'penulis' => 'required|string',
             'penerbit' => 'required|string',
             'tahun_terbit' => 'required|integer',
-            'kategori_id' => 'required|exists:kategoris,id',
+            'kategori_id' => 'nullable|exists:kategoris,id',
             'isbn' => 'required|string',
             'stok' => 'required|integer|min:1',
             'jumlah_halaman' => 'required|integer|min:1',
             'deskripsi' => 'required',
             'status_buku' => 'required|string',
-            'cover' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'isi_buku' => 'required|mimes:pdf|max:20000',
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'isi_buku' => 'nullable|mimes:pdf|max:20000',
         ]);
 
         $coverPath = $request->file('cover')->store('uploads/cover', 'public');
@@ -91,7 +91,7 @@ class BookController extends Controller
     }
 
     public function index() {
-        
+
     }
 
 

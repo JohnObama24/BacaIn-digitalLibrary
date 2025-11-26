@@ -8,7 +8,7 @@ class Kategori extends Model
 {
     //
     protected $table = [
-        'nama_kategpri'
+        'nama_kategori'
     ];
 
     public function bukus()
