@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('hallo');
+    return redirect()->route('login');
 });
 
 Route::get("/login",[AuthController::class,"ShowLogin"])->name("login");
@@ -15,3 +15,5 @@ Route::get("/register",[AuthController::class,"showRegister"])->name("register")
 Route::post("/register",[AuthController::class,"Register"])->name("register.process"); 
 Route::post("/logout",[AuthController::class,"Logout"])->name("logout");
 
+Route::middleware("auth:")->group(function(){
+});
