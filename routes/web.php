@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\book\BookController;
 
 
 
@@ -9,11 +10,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get("/login",[AuthController::class,"ShowLogin"])->name("login");
-Route::post("/login",[AuthController::class,"login"])->name("login.process");
-Route::get("/register",  [AuthController::class,"showRegister"])->name("register");
-Route::post("/register",[AuthController::class,"Register"])->name("register.process");
-Route::post("/logout",[AuthController::class,"Logout"])->name("logout");
+Route::get("/login", [AuthController::class, "ShowLogin"])->name("login");
+Route::post("/login", [AuthController::class, "login"])->name("login.process");
+Route::get("/register", [AuthController::class, "showRegister"])->name("register");
+Route::post("/register", [AuthController::class, "Register"])->name("register.process");
+Route::post("/logout", [AuthController::class, "Logout"])->name("logout");
 
-Route::middleware("auth:")->group(function(){
+Route::middleware("auth:")->group(function () {
+    Route::get('/member/home', [BookController::class, 'index'])->name('member.home');
 });

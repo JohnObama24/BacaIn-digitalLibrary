@@ -29,7 +29,7 @@ class AuthController extends Controller
         }else if(Auth::user()->role == "librarian"){
           return redirect()->route('librarian-dashboard');
        }else{
-        return redirect()->route('user-dashboard');
+        return redirect()->route('member.home');
       }
       };
 

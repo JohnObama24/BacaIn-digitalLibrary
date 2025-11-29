@@ -21,8 +21,8 @@ return new class extends Migration {
             $table->integer('stok');
             $table->integer('jumlah_halaman');
             $table->text('deskripsi');
-            $table->string('cover');
-            $table->string('isi_buku');
+            $table->string('cover')->nullable();
+            $table->string('isi_buku')->nullable();
             $table->string('status_buku');
             $table->timestamps();
 

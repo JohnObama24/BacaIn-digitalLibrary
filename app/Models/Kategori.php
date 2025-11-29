@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kategori extends Model
 {
-    //
-    protected $table = [
-        'nama_kategori'
+    protected $table = 'kategoris'; 
+
+    protected $fillable = [
+        'nama_kategori',
     ];
 
     public function bukus()
     {
-        return $this->hasMany(Buku::class);
+        return $this->hasMany(Buku::class, 'kategori_id');
     }
 }
