@@ -11,7 +11,6 @@ use Carbon\Carbon;
 class PeminjamanController extends Controller
 {
 
-    // Configuration loaded from config/borrowing.php
     public function pinjam(Request $request)
     {
         $maxDays = config('borrowing.max_borrowing_days');
@@ -33,7 +32,6 @@ class PeminjamanController extends Controller
         $hasEbook = !empty($buku->isi_buku);
 
         if ($hasEbook) {
-            // E-book: Auto-approved, immediately available
             Peminjaman::create([
                 'user_id' => auth()->id(),
                 'buku_id' => $request->buku_id,
@@ -46,7 +44,6 @@ class PeminjamanController extends Controller
 
             return redirect()->route('user.peminjaman')->with('success', 'E-book berhasil dipinjam! Anda dapat langsung membacanya.');
         } else {
-            // Physical book: Requires admin approval
             if ($buku->stok < 1) {
                 return back()->withErrors(['stok' => 'Stok buku fisik habis.']);
             }
@@ -78,10 +75,8 @@ class PeminjamanController extends Controller
             return back()->withErrors(['stok' => 'Stok buku habis.']);
         }
 
-        // Kurangi stok buku
         $buku->decrement('stok');
 
-        // Update status peminjaman
         $peminjaman->update([
             'status_peminjaman' => 'dipinjam'
         ]);
@@ -106,9 +101,6 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Peminjaman telah ditolak.');
     }
 
-    /**
-     * Admin confirms physical book return
-     */
     public function kembalikan($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
@@ -118,12 +110,10 @@ class PeminjamanController extends Controller
             return back()->withErrors(['status' => 'Buku tidak sedang dipinjam.']);
         }
 
-        // Only for physical books
         if ($peminjaman->isEbook()) {
             return back()->withErrors(['status' => 'E-book dikembalikan otomatis oleh sistem.']);
         }
 
-        // Calculate fine if late
         $tanggalKembali = Carbon::now();
         $denda = 0;
         $dendaLunas = true;
@@ -151,14 +141,11 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Buku berhasil dikembalikan.');
     }
 
-    /**
-     * User returns e-book manually
-     */
+
     public function returnEbook($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        // Check ownership
         if ($peminjaman->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
@@ -179,24 +166,18 @@ class PeminjamanController extends Controller
         return redirect()->route('user.peminjaman')->with('success', 'E-book berhasil dikembalikan.');
     }
 
-    /**
-     * Display e-book reader
-     */
     public function readEbook($id)
     {
         $peminjaman = Peminjaman::with('buku')->findOrFail($id);
 
-        // Check ownership
         if ($peminjaman->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 
-        // Check if still active and is e-book
         if ($peminjaman->status_peminjaman !== 'dipinjam' || !$peminjaman->isEbook()) {
             return redirect()->route('user.peminjaman')->withErrors(['status' => 'E-book tidak tersedia untuk dibaca.']);
         }
 
-        // Auto-return if overdue
         if ($peminjaman->isOverdue() && config('borrowing.auto_return_ebooks')) {
             $peminjaman->update([
                 'status_peminjaman' => 'dikembalikan',
