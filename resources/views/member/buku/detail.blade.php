@@ -3,22 +3,17 @@
 @section('content')
     <div class="px-4 md:px-24 py-10">
 
-        {{-- Breadcrumb / Header --}}
         <h2 class="text-lg font-semibold text-gray-700 mb-6">Detail Buku</h2>
 
         <div class="bg-white rounded-2xl shadow p-8">
 
-            {{-- TOP SECTION --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
 
-                {{-- Book Cover --}}
                 <div class="flex justify-center">
-                    <img src="{{ asset('storage/' . $book->cover) }}"
-                         alt="{{ $book->judul }}"
-                         class="w-60 rounded-xl shadow">
+                    <img src="{{ asset('storage/' . $book->cover) }}" alt="{{ $book->judul }}"
+                        class="w-60 rounded-xl shadow">
                 </div>
 
-                {{-- Book Info --}}
                 <div class="md:col-span-2 flex flex-col justify-center">
                     <h1 class="text-3xl font-bold">{{ $book->judul }}</h1>
 
@@ -26,7 +21,6 @@
                         {{ $book->penulis }}
                     </p>
 
-                    {{-- Rating --}}
                     <div class="flex items-center mt-2">
                         <div class="flex text-yellow-400 text-xl">
                             ★★★★★
@@ -34,7 +28,6 @@
                         <span class="ml-2 font-semibold text-gray-700">5.0</span>
                     </div>
 
-                    {{-- Badge Tipe Buku --}}
                     <div class="mt-3 flex gap-2">
                         @if($book->hasEbook())
                             <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
@@ -48,15 +41,14 @@
                         @endif
                     </div>
 
-                    {{-- Borrow Button --}}
                     @if($book->isAvailable())
                         <button onclick="openPinjamModal()"
-                                class="bg-teal-500 hover:bg-teal-600 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold transition">
+                            class="bg-teal-500 hover:bg-teal-600 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold transition">
                             Pinjam
                         </button>
                     @else
                         <button disabled
-                                class="bg-gray-400 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold cursor-not-allowed">
+                            class="bg-gray-400 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold cursor-not-allowed">
                             Tidak Tersedia
                         </button>
                     @endif
@@ -64,7 +56,6 @@
 
             </div>
 
-            {{-- INFORMATION BOX --}}
             <div class="grid grid-cols-1 md:grid-cols-3 text-center bg-gray-50 rounded-xl p-6 mt-10">
 
                 <div class="flex flex-col">
@@ -86,7 +77,6 @@
 
             </div>
 
-            {{-- ICON STATS --}}
             <div class="grid grid-cols-3 mt-8 text-center">
 
                 <div class="flex flex-col items-center">
@@ -115,27 +105,21 @@
 
             </div>
 
-            {{-- TABS --}}
             <div class="mt-10 border-b">
                 <ul class="flex gap-6 text-sm font-semibold">
-                    <li class="tab-btn py-2 border-b-2 border-teal-500 text-teal-600 cursor-pointer"
-                        data-tab="deskripsi">
+                    <li class="tab-btn py-2 border-b-2 border-teal-500 text-teal-600 cursor-pointer" data-tab="deskripsi">
                         Deskripsi
                     </li>
-                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black"
-                        data-tab="detail">
+                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black" data-tab="detail">
                         Detail
                     </li>
-                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black"
-                        data-tab="ulasan">
+                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black" data-tab="ulasan">
                         Ulasan
                     </li>
                 </ul>
             </div>
 
-            {{-- TAB CONTENT --}}
             <div class="mt-6">
-                {{-- Tab Deskripsi --}}
                 <div id="tab-deskripsi" class="tab-content">
                     <div class="text-gray-700 leading-relaxed text-sm">
                         <div id="deskripsi-short">
@@ -157,7 +141,6 @@
                     </div>
                 </div>
 
-                {{-- Tab Detail --}}
                 <div id="tab-detail" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
@@ -200,7 +183,8 @@
                     <div class="text-center py-8">
                         <div class="text-gray-400 text-5xl mb-4">💬</div>
                         <p class="text-gray-500">Belum ada ulasan untuk buku ini</p>
-                        <button class="mt-4 bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                        <button
+                            class="mt-4 bg-teal-500 hover:bg-teal-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
                             Tulis Ulasan Pertama
                         </button>
                     </div>
@@ -211,14 +195,13 @@
 
     </div>
 
-    {{-- Modal Pinjam Buku --}}
     <div id="pinjamModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
-            <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4 rounded-t-2xl">
+            <div class="bg-primary-blue px-6 py-4 rounded-t-2xl">
                 <h3 class="text-xl font-bold text-white">Pinjam Buku</h3>
             </div>
 
-            <form action="{{ route('peminjaman.pinjam') }}" method="POST" class="p-6">
+            <form action="{{ route('pinjam') }}" method="POST" class="p-6">
                 @csrf
                 <input type="hidden" name="buku_id" value="{{ $book->id }}">
 
@@ -230,10 +213,11 @@
                 @if($book->hasEbook())
                     <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                         <div class="flex items-start">
-                            <span class="text-green-600 text-xl mr-2">✓</span>
+                            <span class="text-primary-blue text-xl mr-2">✓</span>
                             <div>
-                                <p class="text-sm font-medium text-green-800">E-Book Tersedia</p>
-                                <p class="text-xs text-green-700 mt-1">Peminjaman akan disetujui otomatis dan Anda dapat langsung membaca buku.</p>
+                                <p class="text-sm font-medium text-primary-blue">E-Book Tersedia</p>
+                                <p class="text-xs text-primary-blue mt-1">Peminjaman akan disetujui otomatis dan Anda dapat
+                                    langsung membaca buku.</p>
                             </div>
                         </div>
                     </div>
@@ -243,7 +227,8 @@
                             <span class="text-yellow-600 text-xl mr-2">⚠</span>
                             <div>
                                 <p class="text-sm font-medium text-yellow-800">Buku Fisik</p>
-                                <p class="text-xs text-yellow-700 mt-1">Peminjaman memerlukan persetujuan admin terlebih dahulu.</p>
+                                <p class="text-xs text-yellow-700 mt-1">Peminjaman memerlukan persetujuan admin terlebih dahulu.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -253,12 +238,9 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Tanggal Pengembalian
                     </label>
-                    <input type="date"
-                           name="tanggal_pengembalian"
-                           min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                           max="{{ date('Y-m-d', strtotime('+14 days')) }}"
-                           required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                    <input type="date" name="tanggal_pengembalian" min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                        max="{{ date('Y-m-d', strtotime('+14 days')) }}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                     <p class="text-xs text-gray-500 mt-1">Maksimal 14 hari dari hari ini</p>
                 </div>
 
@@ -271,13 +253,12 @@
                 @endif
 
                 <div class="flex gap-3">
-                    <button type="button"
-                            onclick="closePinjamModal()"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+                    <button type="button" onclick="closePinjamModal()"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
                         Batal
                     </button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-medium">
+                        class="flex-1 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-medium">
                         Konfirmasi Pinjam
                     </button>
                 </div>
@@ -286,32 +267,26 @@
     </div>
 
     <script>
-        // Tab Switching
         document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const tabName = this.getAttribute('data-tab');
 
-                // Remove active state from all tabs
                 document.querySelectorAll('.tab-btn').forEach(btn => {
                     btn.classList.remove('border-teal-500', 'text-teal-600');
                     btn.classList.add('text-gray-600');
                 });
 
-                // Add active state to clicked tab
                 this.classList.add('border-teal-500', 'text-teal-600');
                 this.classList.remove('text-gray-600');
 
-                // Hide all tab contents
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.add('hidden');
                 });
 
-                // Show selected tab content
                 document.getElementById('tab-' + tabName).classList.remove('hidden');
             });
         });
 
-        // Toggle Deskripsi
         function toggleDeskripsi() {
             const shortDesc = document.getElementById('deskripsi-short');
             const fullDesc = document.getElementById('deskripsi-full');
@@ -325,7 +300,6 @@
             }
         }
 
-        // Modal Functions
         function openPinjamModal() {
             document.getElementById('pinjamModal').classList.remove('hidden');
         }
@@ -334,8 +308,7 @@
             document.getElementById('pinjamModal').classList.add('hidden');
         }
 
-        // Close modal when clicking outside
-        document.getElementById('pinjamModal').addEventListener('click', function(e) {
+        document.getElementById('pinjamModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closePinjamModal();
             }

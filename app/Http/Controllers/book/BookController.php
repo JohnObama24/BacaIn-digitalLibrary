@@ -17,6 +17,17 @@ class BookController extends Controller
 
         return view('admin.buku.index', compact('books', 'categories'));
     }
+    public function getBook()
+    {
+        $books = Buku::with('kategori')->latest()->get();
+        $categories = Kategori::all();
+        $popularBooks = Buku::with('kategori')
+            ->orderBy('jumlah_halaman', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('member.index', compact('books', 'categories', 'popularBooks'));
+    }
 
     public function create()
     {
@@ -124,38 +135,36 @@ class BookController extends Controller
     public function showDetail($id)
     {
         $book = Buku::with('kategori')->findOrFail($id);
-
         return view('member.buku.detail', compact('book'));
     }
 
-public function show($id)
-{
-    $book = Buku::with('kategori')->findOrFail($id);
+    public function show($id)
+    {
+        $book = Buku::with('kategori')->findOrFail($id);
 
-    // Hitung data statistik
-    $total_copy = $book->stok;
-    $sedang_dipinjam = Peminjaman::where('buku_id', $id)
-                        ->where('status', 'dipinjam')
-                        ->count();
-    $atrian = Peminjaman::where('buku_id', $id)
-                        ->where('status', 'menunggu')
-                        ->count();
-    $telah_dibaca = Peminjaman::where('buku_id', $id)
-                        ->whereNotNull('tanggal_pengembalian')
-                        ->count();
+        $total_copy = $book->stok;
+        $sedang_dipinjam = Peminjaman::where('buku_id', $id)
+            ->where('status_peminjaman', 'dipinjam')
+            ->count();
+        $atrian = Peminjaman::where('buku_id', $id)
+            ->where('status_peminjaman', 'menunggu')
+            ->count();
+        $telah_dibaca = Peminjaman::where('buku_id', $id)
+            ->whereNotNull('tanggal_pengembalian')
+            ->count();
 
-    $tersedia_copy = $total_copy - $sedang_dipinjam;
+        $tersedia_copy = $total_copy - $sedang_dipinjam;
 
-    $stats = [
-        'total_copy'      => $total_copy,
-        'tersedia_copy'   => $tersedia_copy,
-        'telah_dibaca'    => $telah_dibaca,
-        'atrian'          => $atrian,
-        'sedang_dipinjam' => $sedang_dipinjam,
-    ];
+        $stats = [
+            'total_copy' => $total_copy,
+            'tersedia_copy' => $tersedia_copy,
+            'telah_dibaca' => $telah_dibaca,
+            'atrian' => $atrian,
+            'sedang_dipinjam' => $sedang_dipinjam,
+        ];
 
-    return view('member.book-detail', compact('book', 'stats'));
-}
+        return view('member.buku.detail', compact('book', 'stats'));
+    }
 
 
 

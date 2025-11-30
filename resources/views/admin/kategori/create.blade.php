@@ -55,7 +55,7 @@
     </div>
 
     <!-- Preview -->
-    <div class="mt-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
+    <div class="mt-6 bg-linear-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
         <h4 class="font-semibold text-gray-800 mb-3">Kategori Populer:</h4>
         <div class="flex flex-wrap gap-2">
             @php
