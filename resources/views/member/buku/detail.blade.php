@@ -31,12 +31,12 @@
                     <div class="mt-3 flex gap-2">
                         @if($book->hasEbook())
                             <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                📱 E-Book Tersedia
+                                E-Book Tersedia
                             </span>
                         @endif
                         @if($book->stok > 0)
                             <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                📚 Buku Fisik ({{ $book->stok }} tersedia)
+                                 Buku Fisik ({{ $book->stok }} tersedia)
                             </span>
                         @endif
                     </div>
@@ -178,7 +178,6 @@
                     </div>
                 </div>
 
-                {{-- Tab Ulasan --}}
                 <div id="tab-ulasan" class="tab-content hidden">
                     <div class="text-center py-8">
                         <div class="text-gray-400 text-5xl mb-4">💬</div>
