@@ -7,20 +7,21 @@ use Illuminate\Http\Request;
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Peminjaman;
 class BookController extends Controller
 {
     public function index()
     {
         $books = Buku::with('kategori')->latest()->get();
         $categories = Kategori::all();
-        $popularBooks = Buku::with('kategori')
-            ->orderBy('jumlah_halaman', 'desc')
-            ->take(5)
-            ->get();
 
+        return view('admin.buku.index', compact('books', 'categories'));
+    }
 
-        return view('member.index', compact('books', 'categories', 'popularBooks'));
+    public function create()
+    {
+        $categories = Kategori::all();
+        return view('admin.buku.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -63,7 +64,13 @@ class BookController extends Controller
             'isi_buku' => $pdfPath,
         ]);
 
-        return back()->with('success', 'Buku berhasil ditambahkan');
+        return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan');
+    }
+
+    public function edit(Buku $buku)
+    {
+        $categories = Kategori::all();
+        return view('admin.buku.edit', compact('buku', 'categories'));
     }
 
     public function update(Request $request, Buku $buku)
@@ -107,13 +114,69 @@ class BookController extends Controller
         if ($buku->cover) {
             Storage::disk('public')->delete($buku->cover);
         }
-
         if ($buku->isi_buku) {
             Storage::disk('public')->delete($buku->isi_buku);
         }
-
         $buku->delete();
-
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus');
     }
+
+    public function showDetail($id)
+    {
+        $book = Buku::with('kategori')->findOrFail($id);
+
+        return view('member.buku.detail', compact('book'));
+    }
+
+public function show($id)
+{
+    $book = Buku::with('kategori')->findOrFail($id);
+
+    // Hitung data statistik
+    $total_copy = $book->stok;
+    $sedang_dipinjam = Peminjaman::where('buku_id', $id)
+                        ->where('status', 'dipinjam')
+                        ->count();
+    $atrian = Peminjaman::where('buku_id', $id)
+                        ->where('status', 'menunggu')
+                        ->count();
+    $telah_dibaca = Peminjaman::where('buku_id', $id)
+                        ->whereNotNull('tanggal_pengembalian')
+                        ->count();
+
+    $tersedia_copy = $total_copy - $sedang_dipinjam;
+
+    $stats = [
+        'total_copy'      => $total_copy,
+        'tersedia_copy'   => $tersedia_copy,
+        'telah_dibaca'    => $telah_dibaca,
+        'atrian'          => $atrian,
+        'sedang_dipinjam' => $sedang_dipinjam,
+    ];
+
+    return view('member.book-detail', compact('book', 'stats'));
+}
+
+
+
+    public function readEbook($id)
+    {
+        $buku = Buku::findOrFail($id);
+
+        if (!$buku->hasEbook()) {
+            return redirect()->back()->with('error', 'Buku ini tidak memiliki versi e-book.');
+        }
+
+        $peminjaman = Peminjaman::where('user_id', auth()->id())
+            ->where('buku_id', $id)
+            ->where('status_peminjaman', 'dipinjam')
+            ->first();
+
+        if (!$peminjaman) {
+            return redirect()->back()->with('error', 'Anda harus meminjam buku ini terlebih dahulu untuk membacanya.');
+        }
+
+        return view('member.read-ebook', compact('buku', 'peminjaman'));
+    }
+
 }
