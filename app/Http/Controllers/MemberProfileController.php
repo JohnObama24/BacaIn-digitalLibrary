@@ -71,11 +71,21 @@ class MemberProfileController extends Controller
     public function history()
     {
         $user = Auth::user();
-        $peminjaman = Peminjaman::where('user_id', $user->id)
-            ->with('buku')
-            ->latest()
-            ->paginate(10);
 
-        return view('member.profile.history', compact('peminjaman'));
+        // Get active borrowings (pending or dipinjam)
+        $activePeminjaman = Peminjaman::where('user_id', $user->id)
+            ->with('buku')
+            ->whereIn('status_peminjaman', ['pending', 'dipinjam'])
+            ->latest()
+            ->get();
+
+        // Get history (dikembalikan or ditolak)
+        $historyPeminjaman = Peminjaman::where('user_id', $user->id)
+            ->with('buku')
+            ->whereIn('status_peminjaman', ['dikembalikan', 'ditolak'])
+            ->latest()
+            ->paginate(12);
+
+        return view('member.profile.history', compact('activePeminjaman', 'historyPeminjaman'));
     }
 }

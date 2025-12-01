@@ -1,99 +1,57 @@
 @extends('layouts.member')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Riwayat Peminjaman</h1>
-        <a href="{{ route('member.profile') }}" class="text-blue-600 hover:text-blue-800 flex items-center">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Kembali ke Profil
-        </a>
-    </div>
+    <div class="container mx-auto px-4 py-8">
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Peminjaman Saya</h1>
+            <a href="{{ route('member.profile') }}" class="text-blue-600 hover:text-blue-800 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                    </path>
+                </svg>
+                Kembali ke Profil
+            </a>
+        </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buku</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenggat Kembali</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denda</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($peminjaman as $item)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="shrink-0 h-10 w-10">
-                                        <img class="h-10 w-10 rounded object-cover" src="{{ $item->buku->cover_url }}" alt="">
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900 line-clamp-1 max-w-xs" title="{{ $item->buku->judul }}">
-                                            {{ $item->buku->judul }}
-                                        </div>
-                                        <div class="text-sm text-gray-500">{{ $item->buku->penulis }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                @if($item->tanggal_pengembalian)
-                                    {{ \Carbon\Carbon::parse($item->tanggal_pengembalian)->format('d M Y') }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $statusClass = match($item->status_peminjaman) {
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'dipinjam' => 'bg-blue-100 text-blue-800',
-                                        'dikembalikan' => 'bg-green-100 text-green-800',
-                                        'ditolak' => 'bg-red-100 text-red-800',
-                                        default => 'bg-gray-100 text-gray-800',
-                                    };
-                                @endphp
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                    {{ ucfirst($item->status_peminjaman) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                @if($item->denda > 0)
-                                    <span class="text-red-600 font-semibold">Rp {{ number_format($item->denda, 0, ',', '.') }}</span>
-                                    @if(!$item->denda_lunas)
-                                        <span class="text-xs text-red-500 block">(Belum Lunas)</span>
-                                    @else
-                                        <span class="text-xs text-green-500 block">(Lunas)</span>
-                                    @endif
-                                @else
-                                    -
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-                                Belum ada riwayat peminjaman.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        {{-- Tab Buttons --}}
+        <div class="flex gap-3 mb-6">
+            <a href="{{ route('member.history') }}"
+                class="px-6 py-2 rounded-full font-semibold transition {{ request('tab') !== 'history' ? 'bg-blue-600 text-white shadow' : 'bg-gray-200 text-gray-600 hover:bg-gray-300' }}">
+                Sedang Dipinjam
+            </a>
+            <a href="{{ route('member.history') }}?tab=history"
+                class="px-6 py-2 rounded-full font-semibold transition {{ request('tab') === 'history' ? 'bg-blue-600 text-white shadow' : 'bg-gray-200 text-gray-600 hover:bg-gray-300' }}">
+                Riwayat
+            </a>
         </div>
-        <div class="px-6 py-4 border-t border-gray-200">
-            {{ $peminjaman->links() }}
-        </div>
+
+        {{-- Active Borrowings --}}
+        @if(request('tab') !== 'history')
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @forelse($activePeminjaman as $item)
+                    <x-book-card :item="$item" mode="active" />
+                @empty
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500">Tidak ada buku yang sedang dipinjam</p>
+                    </div>
+                @endforelse
+            </div>
+        @else
+            {{-- History --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @forelse($historyPeminjaman as $item)
+                    <x-book-card :item="$item" mode="history" />
+                @empty
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500">Belum ada riwayat peminjaman</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="mt-6">
+                {{ $historyPeminjaman->links() }}
+            </div>
+        @endif
     </div>
-</div>
 @endsection
