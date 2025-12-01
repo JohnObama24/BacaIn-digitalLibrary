@@ -14,6 +14,26 @@ class UserManagementController extends Controller
     }
 
 
+    public function create()
+    {
+        return view("admin.ManagementUser.create");
+    }
+
+    public function store(Request $request){
+         $request->validate([
+            "name"=>"required|string|max:255",
+            "email"=>"required|email|unique:users,email,",
+            "role"=>"required|in:admin,user,librarian",
+         ]);
+
+         User::create([
+            "name" =>$request->name,
+            "email" => $request->email,
+            "role"=> $request->role,
+         ]);
+
+          return redirect()->route('')->with('success', 'user berhasil ditambahkan');
+    }
 
     public function edit ($id){
         $user = User::findOrFail($id);
@@ -34,7 +54,7 @@ class UserManagementController extends Controller
             "role"=>$request->role,
         ]);
 
-        return redirect()->route("")->with("success","User updated successfully");
+        return redirect()->route("")->with("success","User berhasil diubah");
     }
 
     public function destroy (Request $request, $id ){

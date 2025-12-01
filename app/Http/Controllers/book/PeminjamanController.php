@@ -11,20 +11,21 @@ use Carbon\Carbon;
 class PeminjamanController extends Controller
 {
 
-    private $MAX_HARI = 14;
-    private $TARIF_DENDA_PER_HARI = 1000;
     public function pinjam(Request $request)
     {
+        $maxDays = config('borrowing.max_borrowing_days');
+
         $request->validate([
             'buku_id' => 'required|exists:bukus,id',
             'tanggal_pengembalian' => 'required|date|after:today'
         ]);
-        $buku = Buku::findOrFail($request->buku_id);
 
+        $buku = Buku::findOrFail($request->buku_id);
         $hari = Carbon::now()->diffInDays(Carbon::parse($request->tanggal_pengembalian));
-        if ($hari > $this->MAX_HARI) {
+
+        if ($hari > $maxDays) {
             return back()->withErrors([
-                'tanggal_pengembalian' => "maksimal peminjaman adalah {$this->MAX_HARI} hari."
+                'tanggal_pengembalian' => "Maksimal peminjaman adalah {$maxDays} hari."
             ]);
         }
 
@@ -40,6 +41,8 @@ class PeminjamanController extends Controller
                 'denda' => 0,
                 'denda_lunas' => true
             ]);
+
+            return redirect()->route('user.peminjaman')->with('success', 'E-book berhasil dipinjam! Anda dapat langsung membacanya.');
         } else {
             if ($buku->stok < 1) {
                 return back()->withErrors(['stok' => 'Stok buku fisik habis.']);
@@ -50,17 +53,16 @@ class PeminjamanController extends Controller
                 'buku_id' => $request->buku_id,
                 'tanggal_peminjaman' => Carbon::now(),
                 'tanggal_pengembalian' => Carbon::parse($request->tanggal_pengembalian),
-                'status_peminjaman' => 'pending', // menunggu approval
+                'status_peminjaman' => 'pending',
                 'denda' => 0,
                 'denda_lunas' => true
             ]);
 
-            return redirect()->back()->with('success', 'Request peminjaman menunggu persetujuan admin.');
-            // nanti returnnya ganti ke redirect ke halaman user pemekndskjbjfklvbu;hkjwbefjkldbiopfuohjksfvdbdvilohfksbdnhfhkxbnm cbjkshvfx
+            return redirect()->route('user.peminjaman')->with('success', 'Request peminjaman buku fisik menunggu persetujuan admin.');
         }
     }
 
- public function approve($id)
+    public function approve($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
         $buku = Buku::findOrFail($peminjaman->buku_id);
@@ -73,10 +75,8 @@ class PeminjamanController extends Controller
             return back()->withErrors(['stok' => 'Stok buku habis.']);
         }
 
-        // Kurangi stok buku
         $buku->decrement('stok');
 
-        // Update status peminjaman
         $peminjaman->update([
             'status_peminjaman' => 'dipinjam'
         ]);
@@ -110,14 +110,18 @@ class PeminjamanController extends Controller
             return back()->withErrors(['status' => 'Buku tidak sedang dipinjam.']);
         }
 
-        // Hitung denda jika terlambat
+        if ($peminjaman->isEbook()) {
+            return back()->withErrors(['status' => 'E-book dikembalikan otomatis oleh sistem.']);
+        }
+
         $tanggalKembali = Carbon::now();
         $denda = 0;
         $dendaLunas = true;
+        $fineRate = config('borrowing.fine_per_day');
 
         if ($tanggalKembali->gt($peminjaman->tanggal_pengembalian)) {
             $hariTerlambat = $peminjaman->tanggal_pengembalian->diffInDays($tanggalKembali);
-            $denda = $hariTerlambat * $this->TARIF_DENDA_PER_HARI;
+            $denda = $hariTerlambat * $fineRate;
             $dendaLunas = false;
         }
 
@@ -128,14 +132,61 @@ class PeminjamanController extends Controller
             'denda_lunas' => $dendaLunas
         ]);
 
-        if (!$buku->hasEbook()) {
-            $buku->increment('stok');
-        }
+        // Return physical book to stock kdjfdhjefwryeigyhfbhguwryh
+        $buku->increment('stok');
 
         if ($denda > 0) {
             return back()->with('warning', "Buku dikembalikan dengan denda Rp " . number_format($denda, 0, ',', '.') . " (terlambat {$hariTerlambat} hari)");
         }
         return back()->with('success', 'Buku berhasil dikembalikan.');
+    }
+
+
+    public function returnEbook($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        if ($peminjaman->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (!$peminjaman->canBeReturned()) {
+            return back()->withErrors(['status' => 'Buku tidak dapat dikembalikan.']);
+        }
+
+        if (!$peminjaman->isEbook()) {
+            return back()->withErrors(['status' => 'Hanya e-book yang dapat dikembalikan sendiri.']);
+        }
+
+        $peminjaman->update([
+            'status_peminjaman' => 'dikembalikan',
+            'tanggal_kembali_actual' => Carbon::now(),
+        ]);
+
+        return redirect()->route('user.peminjaman')->with('success', 'E-book berhasil dikembalikan.');
+    }
+
+    public function readEbook($id)
+    {
+        $peminjaman = Peminjaman::with('buku')->findOrFail($id);
+
+        if ($peminjaman->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($peminjaman->status_peminjaman !== 'dipinjam' || !$peminjaman->isEbook()) {
+            return redirect()->route('user.peminjaman')->withErrors(['status' => 'E-book tidak tersedia untuk dibaca.']);
+        }
+
+        if ($peminjaman->isOverdue() && config('borrowing.auto_return_ebooks')) {
+            $peminjaman->update([
+                'status_peminjaman' => 'dikembalikan',
+                'tanggal_kembali_actual' => Carbon::now(),
+            ]);
+            return redirect()->route('user.peminjaman')->with('warning', 'E-book telah melewati batas waktu peminjaman dan dikembalikan otomatis.');
+        }
+
+        return view('member.ebook.read', compact('peminjaman'));
     }
 
     public function konfirmasiDenda($id)
@@ -154,7 +205,7 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Pembayaran denda telah dikonfirmasi.');
     }
 
-        public function index()
+    public function index()
     {
         $peminjaman = Peminjaman::with(['user', 'buku'])
             ->latest()
