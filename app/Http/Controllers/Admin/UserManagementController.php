@@ -16,35 +16,43 @@ class UserManagementController extends Controller
 
     public function create()
     {
-        return view("admin.ManagementUser.create");
+        $users = User::all();
+        return view("admin.ManagementUser.create", compact("users"));
     }
 
     public function store(Request $request){
          $request->validate([
             "name"=>"required|string|max:255",
             "email"=>"required|email|unique:users,email,",
+            "password"=> "Required|string|min:8|confirmed",
             "role"=>"required|in:admin,user,librarian",
          ]);
 
          User::create([
             "name" =>$request->name,
             "email" => $request->email,
+            "password"=> bcrypt($request->password),
             "role"=> $request->role,
          ]);
 
-          return redirect()->route('')->with('success', 'user berhasil ditambahkan');
+          return redirect()->route('user.index')->with('success', 'user berhasil ditambahkan');
     }
 
     public function edit ($id){
         $user = User::findOrFail($id);
-        return view("admin.users.edit",compact("user"));
+        return view("admin.ManagementUser.edit",compact("user"));
     }
 
     public function update (Request $request, $id ){
+
+        dd($request->all());
+
         $request->validate([
             "name"=>"required|string|max:255",
             "email"=>"required|email|unique:users,email,".$id,
+            "password"=> "Required|string|min:8|confirmed",
             "role"=>"required|in:admin,user,librarian",
+            "status"=>"required|in:Aktif,Nonaktif",
         ]);
         $user = User::findOrFail($id);
 
@@ -52,15 +60,17 @@ class UserManagementController extends Controller
             "name"=>$request->name,
             "email"=>$request->email,
             "role"=>$request->role,
+            "status"=>$request->status,
+            "password"=> bcrypt($request->password),
         ]);
 
-        return redirect()->route("")->with("success","User berhasil diubah");
+        return redirect()->route("user.index")->with("success","User berhasil diubah");
     }
 
     public function destroy (Request $request, $id ){
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route("admin.users.index")->with("success","User deleted successfully");
+        return redirect()->route("user.index'")->with("success","User deleted successfully");
     }
 }
