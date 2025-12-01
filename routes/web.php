@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\book\BookController;
 use App\Http\Controllers\book\KategoriController;
 use App\Http\Controllers\book\PeminjamanController;
+use App\Http\Controllers\MemberProfileController;
 
 
 
@@ -27,6 +28,11 @@ Route::middleware(['role:user'])->group(function () {
     Route::get('/peminjaman-saya', [PeminjamanController::class, 'userPeminjaman'])->name('user.peminjaman');
     Route::post('/peminjaman/{id}/return-ebook', [PeminjamanController::class, 'returnEbook'])->name('peminjaman.return-ebook');
     Route::get('/ebook/read/{id}', [PeminjamanController::class, 'readEbook'])->name('ebook.read');
+
+    Route::get('/profile', [MemberProfileController::class, 'index'])->name('member.profile');
+    Route::get('/profile/favorites', [MemberProfileController::class, 'favorites'])->name('member.favorites');
+    Route::post('/profile/favorites/toggle', [MemberProfileController::class, 'toggleFavorite'])->name('member.favorites.toggle');
+    Route::get('/profile/history', [MemberProfileController::class, 'history'])->name('member.history');
 });
 
 Route::middleware(['role:admin'])->group(function () {
@@ -36,7 +42,7 @@ Route::middleware(['role:admin'])->group(function () {
 
     Route::resource('kategori', KategoriController::class)->except(['show']);
 
-     Route::resource('user', UserManagementController::class)->except(['show']);
+    Route::resource('user', UserManagementController::class)->except(['show']);
 
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/peminjaman/{id}/approve', [PeminjamanController::class, 'approve'])->name('peminjaman.approve');

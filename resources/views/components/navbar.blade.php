@@ -75,7 +75,7 @@
 
             <div class="py-2">
 
-                <a href="#" class="block px-6 py-3 hover:bg-gray-100 font-medium">Profile</a>
+                <a href="{{ route('member.profile') }}" class="block px-6 py-3 hover:bg-gray-100 font-medium">Profile</a>
 
                 <a href="{{ route('member.home') }}" class="block px-6 py-3 hover:bg-gray-100 font-medium">
                     Home
@@ -85,11 +85,11 @@
                     Koleksi Buku
                 </a>
 
-                <a href="#" class="block px-6 py-3 hover:bg-gray-100 font-medium">
+                <a href="{{ route('member.favorites') }}" class="block px-6 py-3 hover:bg-gray-100 font-medium">
                     Favorit
                 </a>
 
-                <a href="#" class="block px-6 py-3 hover:bg-gray-100 font-medium">
+                <a href="{{ route('member.history') }}" class="block px-6 py-3 hover:bg-gray-100 font-medium">
                     Peminjaman Saya
                 </a>
 

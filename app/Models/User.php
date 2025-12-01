@@ -47,7 +47,7 @@ class User extends Authenticatable
         ];
     }
 
-      public function peminjaman()
+    public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'user_id');
     }
@@ -55,30 +55,34 @@ class User extends Authenticatable
     public function peminjamanAktif()
     {
         return $this->hasMany(Peminjaman::class, 'user_id')
-                    ->whereIn('status_peminjaman', ['pending', 'dipinjam']);
+            ->whereIn('status_peminjaman', ['pending', 'dipinjam']);
     }
 
 
     public function hasDendaBelumLunas()
     {
         return $this->peminjaman()
-                    ->where('denda_lunas', false)
-                    ->where('denda', '>', 0)
-                    ->exists();
+            ->where('denda_lunas', false)
+            ->where('denda', '>', 0)
+            ->exists();
     }
 
 
     public function getTotalDendaAttribute()
     {
         return $this->peminjaman()
-                    ->where('denda_lunas', false)
-                    ->sum('denda');
+            ->where('denda_lunas', false)
+            ->sum('denda');
     }
 
     public function getJumlahBukuDipinjamAttribute()
     {
         return $this->peminjaman()
-                    ->where('status_peminjaman', 'dipinjam')
-                    ->count();
+            ->where('status_peminjaman', 'dipinjam')
+            ->count();
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

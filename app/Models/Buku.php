@@ -72,4 +72,8 @@ class Buku extends Model
     {
         return $this->isi_buku ? asset('storage/' . $this->isi_buku) : null;
     }
+    public function favoritedBy()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }

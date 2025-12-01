@@ -3,10 +3,10 @@
 @section('content')
     <div class="px-4 md:px-24 py-10">
 
-        
+
         <div class="bg-white rounded-2xl shadow p-8">
             <h2 class="text-lg font-semibold text-primary-blue mb-6">Detail Buku</h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
 
                 <div class="flex justify-center">
@@ -36,21 +36,49 @@
                         @endif
                         @if($book->stok > 0)
                             <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                 Buku Fisik ({{ $book->stok }} tersedia)
+                                Buku Fisik ({{ $book->stok }} tersedia)
                             </span>
                         @endif
                     </div>
 
                     @if($book->isAvailable())
-                        <button onclick="openPinjamModal()"
-                            class="bg-primary-blue hover:bg-primary-blue/80 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold transition">
-                            Pinjam
-                        </button>
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="openPinjamModal()"
+                                class="bg-primary-blue hover:bg-primary-blue/80 text-white px-7 py-2 rounded-full font-semibold transition">
+                                Pinjam
+                            </button>
+                            @php
+                                $isFavorited = auth()->user()->favorites()->where('buku_id', $book->id)->exists();
+                            @endphp
+                            <button onclick="toggleFavorite({{ $book->id }}, this)"
+                                class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 hover:bg-gray-50 transition {{ $isFavorited ? 'text-pink-600' : 'text-gray-400' }}"
+                                title="{{ $isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit' }}">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
                     @else
-                        <button disabled
-                            class="bg-gray-400 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold cursor-not-allowed">
-                            Tidak Tersedia
-                        </button>
+                        <div class="flex gap-3 mt-4">
+                            <button disabled
+                                class="bg-gray-400 text-white px-7 py-2 rounded-full font-semibold cursor-not-allowed">
+                                Tidak Tersedia
+                            </button>
+                            @php
+                                $isFavorited = auth()->user()->favorites()->where('buku_id', $book->id)->exists();
+                            @endphp
+                            <button onclick="toggleFavorite({{ $book->id }}, this)"
+                                class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 hover:bg-gray-50 transition {{ $isFavorited ? 'text-pink-600' : 'text-gray-400' }}"
+                                title="{{ $isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit' }}">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
                     @endif
                 </div>
 
@@ -107,13 +135,16 @@
 
             <div class="mt-10 border-b w-full flex justify-center items-center">
                 <ul class="flex gap-6 text-sm font-semibold">
-                    <li class="tab-btn py-2 hover:border-b-2  hover:border-teal-500 text-teal-600 cursor-pointer" data-tab="deskripsi">
+                    <li class="tab-btn py-2 hover:border-b-2  hover:border-teal-500 text-teal-600 cursor-pointer"
+                        data-tab="deskripsi">
                         Deskripsi
                     </li>
-                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black" data-tab="detail">
+                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black"
+                        data-tab="detail">
                         Detail
                     </li>
-                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black" data-tab="ulasan">
+                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black"
+                        data-tab="ulasan">
                         Ulasan
                     </li>
                 </ul>
@@ -312,5 +343,29 @@
                 closePinjamModal();
             }
         });
+
+        function toggleFavorite(bookId, btn) {
+            fetch('{{ route("member.favorites.toggle") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ buku_id: bookId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'added') {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-pink-600');
+                        btn.title = 'Hapus dari favorit';
+                    } else {
+                        btn.classList.remove('text-pink-600');
+                        btn.classList.add('text-gray-400');
+                        btn.title = 'Tambah ke favorit';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
 @endsection
