@@ -17,9 +17,23 @@ class BookController extends Controller
 
         return view('admin.buku.index', compact('books', 'categories'));
     }
-    public function getBook()
+    public function getBook(Request $request)
     {
-        $books = Buku::with('kategori')->latest()->get();
+        $query = Buku::with('kategori')->latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                    ->orWhere('penulis', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori_id', $request->kategori);
+        }
+
+        $books = $query->get();
         $categories = Kategori::all();
         $popularBooks = Buku::with('kategori')
             ->orderBy('jumlah_halaman', 'desc')

@@ -3,10 +3,10 @@
 @section('content')
     <div class="px-4 md:px-24 py-10">
 
-        <h2 class="text-lg font-semibold text-gray-700 mb-6">Detail Buku</h2>
-
+        
         <div class="bg-white rounded-2xl shadow p-8">
-
+            <h2 class="text-lg font-semibold text-primary-blue mb-6">Detail Buku</h2>
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
 
                 <div class="flex justify-center">
@@ -43,7 +43,7 @@
 
                     @if($book->isAvailable())
                         <button onclick="openPinjamModal()"
-                            class="bg-teal-500 hover:bg-teal-600 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold transition">
+                            class="bg-primary-blue hover:bg-primary-blue/80 text-white px-7 py-2 rounded-full mt-4 w-fit font-semibold transition">
                             Pinjam
                         </button>
                     @else
@@ -105,21 +105,21 @@
 
             </div>
 
-            <div class="mt-10 border-b">
+            <div class="mt-10 border-b w-full flex justify-center items-center">
                 <ul class="flex gap-6 text-sm font-semibold">
-                    <li class="tab-btn py-2 border-b-2 border-teal-500 text-teal-600 cursor-pointer" data-tab="deskripsi">
+                    <li class="tab-btn py-2 hover:border-b-2  hover:border-teal-500 text-teal-600 cursor-pointer" data-tab="deskripsi">
                         Deskripsi
                     </li>
-                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black" data-tab="detail">
+                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black" data-tab="detail">
                         Detail
                     </li>
-                    <li class="tab-btn py-2 text-gray-600 cursor-pointer hover:text-black" data-tab="ulasan">
+                    <li class="tab-btn py-2 hover:border-b-2 hover:border-teal-500 text-gray-600 cursor-pointer hover:text-black" data-tab="ulasan">
                         Ulasan
                     </li>
                 </ul>
             </div>
 
-            <div class="mt-6">
+            <div class="mt-6 w-full flex justify-center items-center">
                 <div id="tab-deskripsi" class="tab-content">
                     <div class="text-gray-700 leading-relaxed text-sm">
                         <div id="deskripsi-short">

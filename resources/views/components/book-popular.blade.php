@@ -5,27 +5,33 @@
         <h2 class="text-3xl font-semibold mb-4">Popular Books In The Week</h2>
 
         <div class="bg-[#0F6A8C] rounded-2xl p-6">
-            <div class="grid grid-cols-4 md:grid-cols-6 gap-6 justify-items-center">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
+                
                 @foreach ($popularBooks as $index => $b)
-                    <div class="relative">
-                        <div class="bg-white w-28 h-28 md:w-32 md:h-32 rounded-full p-3 shadow-md flex items-center justify-center">
+                    <div class="relative flex flex-col items-center">
+
+                        <div class="bg-white w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 
+                                    rounded-full p-2 sm:p-3 shadow-md flex items-center justify-center">
+                            
                             <img src="{{ asset('storage/' . $b->cover) }}"
-                                class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full">
+                                class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-full">
                         </div>
 
-                        <div class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs
+                        <div class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs 
                                     rounded-full w-6 h-6 flex items-center justify-center font-bold">
                             {{ $index + 1 }}
                         </div>
 
-                        <p class="text-white text-center mt-3 text-sm truncate w-28">
+                        <p class="text-white text-center mt-3 text-xs sm:text-sm font-medium truncate w-24 sm:w-28 md:w-32">
                             {{ $b->judul }}
                         </p>
                     </div>
                 @endforeach
+
             </div>
         </div>
     </div>
+
 @else
     <div class="px-4 md:px-16 mt-12">
         <h2 class="text-lg font-bold mb-4">Popular Books In The Week</h2>

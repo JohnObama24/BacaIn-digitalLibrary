@@ -24,7 +24,6 @@
     </div>
 
     @if($isEdit && $category->bukus->count() > 0)
-        <!-- Category Info -->
         <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded">
             <div class="flex items-start">
                 <svg class="w-5 h-5 text-indigo-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +42,6 @@
     @endif
 
     @if(!$isEdit)
-        <!-- Tips untuk Create -->
         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
             <div class="flex items-start">
                 <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +60,6 @@
         </div>
     @endif
 
-    <!-- Action Buttons -->
     <div class="flex items-center justify-end space-x-4 pt-6 border-t">
         <button type="button" @click="$dispatch('close-modal')"
             class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
