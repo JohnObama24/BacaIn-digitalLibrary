@@ -10,10 +10,10 @@ class UserManagementController extends Controller
 {
     public function index(){
         $users = User::all();
-        return view("admin.users.index",compact("users"));
+        return view("admin.ManagementUser.index",compact("users"));
     }
 
-  
+
 
     public function edit ($id){
         $user = User::findOrFail($id);

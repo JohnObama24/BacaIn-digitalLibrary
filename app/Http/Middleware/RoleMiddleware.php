@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
@@ -16,14 +17,10 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-    if (!Auth::check()) {
-            abort(403, 'Unauthorized');
-        }
-
-        // Cek role-nya
-        if (Auth::user()->role !== $role) {
-            abort(403, 'Forbidden');
-        }
+        $user = $request->user();
+        if (!$user || $user->role != $role) {
+            return redirect()->route('login');
+        };
         return $next($request);
     }
 }

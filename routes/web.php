@@ -16,6 +16,13 @@ Route::get("/register", [AuthController::class, "showRegister"])->name("register
 Route::post("/register", [AuthController::class, "Register"])->name("register.process");
 Route::post("/logout", [AuthController::class, "Logout"])->name("logout");
 
-Route::middleware("auth:")->group(function () {
+Route::middleware("role:user")->group(function () {
     Route::get('/member/home', [BookController::class, 'index'])->name('member.home');
+});
+
+
+Route::middleware("role:admin ")->group(function () {
+Route::get('/admin/home', function () {
+    return view('admin.index');
+})->name('admin-dashboard');
 });
