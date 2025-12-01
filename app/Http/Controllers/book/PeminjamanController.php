@@ -132,7 +132,7 @@ class PeminjamanController extends Controller
             'denda_lunas' => $dendaLunas
         ]);
 
-        // Return physical book to stock
+        // Return physical book to stock kdjfdhjefwryeigyhfbhguwryh
         $buku->increment('stok');
 
         if ($denda > 0) {
