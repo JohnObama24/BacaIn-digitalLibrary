@@ -5,55 +5,55 @@
 @section('subheader', 'Kelola semua peminjaman buku')
 
 @section('content')
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ tab: 'all' }">
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-yellow-500">
+            <div class="bg-white rounded-xl shadow-md p-5 ">
                 <p class="text-gray-500 text-sm mb-1">Pending</p>
-                <p class="text-3xl font-bold text-yellow-600">
+                <p class="text-3xl font-bold text-primary-blue">
                     {{ $peminjaman->where('status_peminjaman', 'pending')->count() }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-blue-500">
+            <div class="bg-white rounded-xl shadow-md p-5 ">
                 <p class="text-gray-500 text-sm mb-1">Dipinjam</p>
-                <p class="text-3xl font-bold text-blue-600">
+                <p class="text-3xl font-bold text-primary-blue">
                     {{ $peminjaman->where('status_peminjaman', 'dipinjam')->count() }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-green-500">
+            <div class="bg-white rounded-xl shadow-md p-5 ">
                 <p class="text-gray-500 text-sm mb-1">Dikembalikan</p>
-                <p class="text-3xl font-bold text-green-600">
+                <p class="text-3xl font-bold text-primary-blue">
                     {{ $peminjaman->where('status_peminjaman', 'dikembalikan')->count() }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-red-500">
+            <div class="bg-white rounded-xl shadow-md p-5 ">
                 <p class="text-gray-500 text-sm mb-1">Ditolak</p>
-                <p class="text-3xl font-bold text-red-600">
+                <p class="text-3xl font-bold text-primary-blue">
                     {{ $peminjaman->where('status_peminjaman', 'rejected')->count() }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-md p-5 border-l-4 border-purple-500">
+            <div class="bg-white rounded-xl shadow-md p-5 ">
                 <p class="text-gray-500 text-sm mb-1">Total Denda</p>
-                <p class="text-2xl font-bold text-purple-600">Rp
+                <p class="text-2xl font-bold text-primary-blue">Rp
                     {{ number_format($peminjaman->where('denda_lunas', false)->sum('denda'), 0, ',', '.') }}</p>
             </div>
         </div>
 
         <!-- Filter Tabs -->
-        <div class="bg-white rounded-xl shadow-md p-1 flex space-x-1" x-data="{ tab: 'all' }">
+        <div class="bg-white rounded-xl shadow-md p-1 flex space-x-1">
             <button @click="tab = 'all'"
-                :class="tab === 'all' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                :class="tab === 'all' ? 'bg-primary-blue text-white' : 'text-gray-600 hover:bg-primary-blue/80'"
                 class="flex-1 px-4 py-2 rounded-lg font-medium transition">
                 Semua ({{ $peminjaman->count() }})
             </button>
             <button @click="tab = 'pending'"
-                :class="tab === 'pending' ? 'bg-yellow-500 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                :class="tab === 'pending' ? 'bg-primary-blue text-white' : 'text-gray-600 hover:bg-primary-blue/80'"
                 class="flex-1 px-4 py-2 rounded-lg font-medium transition">
                 Pending ({{ $peminjaman->where('status_peminjaman', 'pending')->count() }})
             </button>
             <button @click="tab = 'dipinjam'"
-                :class="tab === 'dipinjam' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                :class="tab === 'dipinjam' ? 'bg-primary-blue text-white' : 'text-gray-600 hover:bg-primary-blue/80'"
                 class="flex-1 px-4 py-2 rounded-lg font-medium transition">
                 Dipinjam ({{ $peminjaman->where('status_peminjaman', 'dipinjam')->count() }})
             </button>
             <button @click="tab = 'dikembalikan'"
-                :class="tab === 'dikembalikan' ? 'bg-green-500 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                :class="tab === 'dikembalikan' ? 'bg-primary-blue text-white' : 'text-gray-600 hover:bg-primary-blue/80'"
                 class="flex-1 px-4 py-2 rounded-lg font-medium transition">
                 Dikembalikan ({{ $peminjaman->where('status_peminjaman', 'dikembalikan')->count() }})
             </button>
@@ -95,11 +95,11 @@
                                         <!-- Book Type Badge -->
                                         @if($item->isEbook())
                                             <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium">
-                                                💻 E-Book
+                                                E-Book
                                             </span>
                                         @else
                                             <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                                                📚 Fisik
+                                                Fisik
                                             </span>
                                         @endif
                                     </div>
@@ -152,11 +152,11 @@
                                 <!-- Status Badge -->
                                 @php
                                     $statusConfig = [
-                                        'pending' => ['class' => 'bg-yellow-100 text-yellow-700', 'icon' => '⏳', 'text' => 'Pending'],
-                                        'dipinjam' => ['class' => 'bg-blue-100 text-blue-700', 'icon' => '📖', 'text' => 'Dipinjam'],
-                                        'dikembalikan' => ['class' => 'bg-green-100 text-green-700', 'icon' => '✅', 'text' => 'Dikembalikan'],
-                                        'rejected' => ['class' => 'bg-red-100 text-red-700', 'icon' => '❌', 'text' => 'Ditolak'],
-                                        'selesai' => ['class' => 'bg-gray-100 text-gray-700', 'icon' => '🏁', 'text' => 'Selesai'],
+                                        'pending' => ['class' => 'bg-yellow-100 text-yellow-700', 'icon' => '', 'text' => 'Pending'],
+                                        'dipinjam' => ['class' => 'bg-blue-100 text-blue-700', 'icon' => '', 'text' => 'Dipinjam'],
+                                        'dikembalikan' => ['class' => 'bg-green-100 text-green-700', 'icon' => '', 'text' => 'Dikembalikan'],
+                                        'rejected' => ['class' => 'bg-red-100 text-red-700', 'icon' => '', 'text' => 'Ditolak'],
+                                        'selesai' => ['class' => 'bg-gray-100 text-gray-700', 'icon' => '', 'text' => 'Selesai'],
                                     ];
                                     $config = $statusConfig[$item->status_peminjaman] ?? ['class' => 'bg-gray-100 text-gray-700', 'icon' => '❓', 'text' => ucfirst($item->status_peminjaman)];
                                 @endphp
@@ -171,7 +171,7 @@
                                             @csrf
                                             <button type="submit"
                                                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium">
-                                                ✓ Setujui
+                                                Setujui
                                             </button>
                                         </form>
                                         <form action="{{ route('peminjaman.reject', $item->id) }}" method="POST" class="inline"
@@ -179,7 +179,7 @@
                                             @csrf
                                             <button type="submit"
                                                 class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium">
-                                                ✗ Tolak
+                                                Tolak
                                             </button>
                                         </form>
                                     @endif
