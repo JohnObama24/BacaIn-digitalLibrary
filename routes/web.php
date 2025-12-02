@@ -41,7 +41,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::resource('buku', BookController::class)->except(['show']);
 
     Route::resource('kategori', KategoriController::class)->except(['show']);
-    
+
     Route::get('/user', [UserManagementController::class, 'index'])->name('user.index');
     Route::get('/userCreate', [UserManagementController::class, 'create'])->name('user.create');
     Route::post('/userCreate', [UserManagementController::class, 'store'])->name('user.store');
@@ -49,6 +49,9 @@ Route::middleware(['role:admin'])->group(function () {
     Route::Put('/user/edit{id}', [UserManagementController::class, 'update'])->name('user.update');
     Route::delete('/user/delete{id}', [UserManagementController::class, 'destroy'])->name('user.destroy');
 
+    Route::get('laporan', function () {
+        return view('admin.laporan.index');
+    })->name('laporan.index');
 
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/peminjaman/{id}/approve', [PeminjamanController::class, 'approve'])->name('peminjaman.approve');

@@ -19,7 +19,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                
+
                 <svg x-show="openMenu" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M6 18L18 6M6 6l12 12" />
@@ -51,8 +51,12 @@
                Kategori Buku
             </a>
 
-            <a href="#" class="block px-6 py-3 hover:bg-gray-100 font-medium">
+            <a href="{{ route('laporan.index')}}" class="block px-6 py-3 hover:bg-gray-100 font-medium">
                 Laporan Digital
+            </a>
+
+            <a href="{{ route("user.index") }}" class="block px-6 py-3 hover:bg-gray-100 font-medium">
+                Manajemen Users
             </a>
 
             <a href="#" class="block px-6 py-3 hover:bg-gray-100 font-medium">
@@ -73,12 +77,12 @@
         </div>
     </div>
     </nav>
-    
+
 <div class="w-full bg-white shadow-sm border-b border-gray-200">
-    <div class="px-6"> <div class="flex items-center h-14"> 
+    <div class="px-6"> <div class="flex items-center h-14">
             <div class="flex items-center gap-2 h-full border-b-[3px] border-primary-blue text-primary-blue px-1">
                 <h2 class="font-bold text-lg tracking-wide">
-                    @yield('page_title', 'Dashboard') 
+                    @yield('page_title', 'Dashboard')
                 </h2>
             </div>
 

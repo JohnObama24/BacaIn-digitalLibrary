@@ -3,6 +3,7 @@
 @section('title', 'Kelola Kategori')
 @section('header', 'Kelola Kategori')
 @section('subheader', 'Daftar semua kategori buku')
+@section('page_title', 'Kategori  Buku')
 
 @section('content')
     <div class="space-y-6">
