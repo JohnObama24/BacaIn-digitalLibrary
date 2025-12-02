@@ -35,19 +35,12 @@ Route::middleware(['role:user'])->group(function () {
     Route::get('/profile/history', [MemberProfileController::class, 'history'])->name('member.history');
 });
 
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role:admin,librarian'])->group(function () {
     Route::get('/admin', fn() => view('admin.index'))->name('admin.dashboard');
 
     Route::resource('buku', BookController::class)->except(['show']);
 
     Route::resource('kategori', KategoriController::class)->except(['show']);
-
-    Route::get('/user', [UserManagementController::class, 'index'])->name('user.index');
-    Route::get('/userCreate', [UserManagementController::class, 'create'])->name('user.create');
-    Route::post('/userCreate', [UserManagementController::class, 'store'])->name('user.store');
-    Route::get('/user/edit{id}', [UserManagementController::class, 'edit'])->name('user.edit');
-    Route::Put('/user/edit{id}', [UserManagementController::class, 'update'])->name('user.update');
-    Route::delete('/user/delete{id}', [UserManagementController::class, 'destroy'])->name('user.destroy');
 
     Route::get('laporan', function () {
         return view('admin.laporan.index');
@@ -58,6 +51,19 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('/peminjaman/{id}/reject', [PeminjamanController::class, 'reject'])->name('peminjaman.reject');
     Route::post('/peminjaman/{id}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
     Route::post('/peminjaman/{id}/konfirmasi-denda', [PeminjamanController::class, 'konfirmasiDenda'])->name('peminjaman.konfirmasi-denda');
+
+    Route::get('/laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/pdf', [App\Http\Controllers\Admin\LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+    Route::get('/laporan/excel', [App\Http\Controllers\Admin\LaporanController::class, 'exportExcel'])->name('laporan.excel');
+});
+
+Route::middleware(['role:admin'])->group(function () {
+    Route::get('/user', [UserManagementController::class, 'index'])->name('user.index');
+    Route::get('/userCreate', [UserManagementController::class, 'create'])->name('user.create');
+    Route::post('/userCreate', [UserManagementController::class, 'store'])->name('user.store');
+    Route::get('/user/edit{id}', [UserManagementController::class, 'edit'])->name('user.edit');
+    Route::Put('/user/edit{id}', [UserManagementController::class, 'update'])->name('user.update');
+    Route::delete('/user/delete{id}', [UserManagementController::class, 'destroy'])->name('user.destroy');
 });
 
 
